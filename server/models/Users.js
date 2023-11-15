@@ -14,7 +14,6 @@ const UsersSchema = new mongoose.Schema({
 	},
 	firstName: String,
 	lastName: String,
-	bio: String,
 	recipesSaved: [mongoose.ObjectId],
 	recipesSubmitted: [mongoose.ObjectId],
 });

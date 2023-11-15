@@ -1,28 +1,43 @@
+const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
-const UserModel = require('../models/Users');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
-const dotenv = require('dotenv');
+const User = require('../models/Users');
 
 // get config vars
 dotenv.config();
 
-// Passport middleware for user signup
 passport.use(
 	'signup',
 	new localStrategy(
 		{
 			usernameField: 'email',
-			passwordField: 'password'
+			passwordField: 'password',
+			passReqToCallback: true
 		},
-		async (email, password, done) => {
+		async (req, email, password, done) => {
 			try {
+				// Check if user already exists with the given email
+				const userExists = await User.findOne({ email });
+				if (userExists) {
+					return done(null, userExists, { message: 'User already exists' });
+				}
+
 				// Create a new user with the given email and password
-				const user = await UserModel.create({ email, password });
+				const newUser = new User({
+					email,
+					password,
+					firstName: req.body.firstName,
+					lastName: req.body.lastName,
+					recipesSaved: req.body.recipesSaved,
+					recipesSubmitted: req.body.recipesSubmitted,
+				});
+				const savedUser = await newUser.save();
 
 				// Return the new user
-				return done(null, user);
+				return done(null, savedUser, { message: 'Signup successful' });
 			} catch (error) {
 				// Return any errors that occur during the signup process
 				done(error);
@@ -42,15 +57,15 @@ passport.use(
 		async (email, password, done) => {
 			try {
 				// Find the user with the given email
-				const user = await UserModel.findOne({ email });
+				const savedUser = await User.findOne({ email });
 
 				// If the user is not found, return an error
-				if (!user) {
+				if (!savedUser) {
 					return done(null, false, { message: 'User not found' });
 				}
 
 				// Validate the user's password
-				const validate = await user.isValidPassword(password);
+				const validate = await savedUser.isValidPassword(password);
 
 				// If the password is incorrect, return an error
 				if (!validate) {
@@ -58,7 +73,7 @@ passport.use(
 				}
 
 				// If the email and password are correct, return the user
-				return done(null, user, { message: 'Logged in Successfully' });
+				return done(null, savedUser, { message: 'Logged in Successfully' });
 			} catch (error) {
 				// Return any errors that occur during the login process
 				return done(error);
@@ -67,12 +82,19 @@ passport.use(
 	)
 );
 
+const cookieExtractor = function (req) {
+	let token = null;
+	if (req && req.cookies) {
+		token = req.cookies['token'];
+	}
+	return token;
+};
 
 passport.use(
 	new JWTstrategy(
 		{
 			secretOrKey: process.env.TOKEN_SECRET,
-			jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+			jwtFromRequest: cookieExtractor
 		},
 		async (token, done) => {
 			try {
@@ -83,3 +105,13 @@ passport.use(
 		}
 	)
 );
+
+const requireAuth = (req, res, next) => {
+	return passport.authenticate('jwt', { session: false })(req, res, next);
+};
+
+module.exports = {
+	passport,
+	requireAuth,
+	jwt
+};

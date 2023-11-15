@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Recipe = require("../models/Recipes");
+const { requireAuth } = require("../auth/auth");
 
 // get all recipes
 router.get("/", async (req, res) => {
@@ -27,7 +28,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // create new recipe
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
 	try {
 		const newRecipe = new Recipe(req.body);
 		const savedRecipe = await newRecipe.save();
@@ -39,13 +40,8 @@ router.post("/", async (req, res) => {
 
 });
 
-router.post("/:id", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
-});
-
 // delete by id	
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
 	try {
 		const deleteRecipe = await Recipe.findByIdAndDelete({ _id: req.params.id });
 		res.json(deleteRecipe);
@@ -55,13 +51,9 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
-router.delete("/", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
-});
 
 // update by id	
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
 	console.log(req.body)
 	try {
 		const updateRecipe = await Recipe.updateOne(
@@ -75,7 +67,7 @@ router.put("/:id", async (req, res) => {
 	}
 });
 
-router.put("/", async (req, res) => {
+router.all("*", async (req, res) => {
 	res.status(405);
 	res.json({ message: "Method not allowed." });
 });

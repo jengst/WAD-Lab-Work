@@ -1,10 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const errorhandler = require('errorhandler');
 const dotenv = require('dotenv');
-const passport = require('passport');
-require('./auth/auth');
 
 // get config vars
 dotenv.config();
@@ -24,6 +23,7 @@ app.use((req, res, next) => {
 app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(errorhandler());
 
 // database
@@ -47,10 +47,7 @@ const reviewRoute = require("./routes/Reviews");
 app.use("/review", reviewRoute);
 
 const userRoute = require("./routes/Users");
-app.use("/user", passport.authenticate('jwt', { session: false }), userRoute);
-
-const authRoute = require("./routes/Auth");
-app.use("/auth", authRoute);
+app.use("/user", userRoute);
 
 // Handle errors
 app.use((err, req, res, next) => {

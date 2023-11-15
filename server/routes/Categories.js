@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Category = require("../models/Categories");
+const { requireAuth } = require("../auth/auth");
 
 
 // get all recipes
@@ -22,19 +23,14 @@ router.get("/:id", async (req, res) => {
 });
 
 // create new recipe
-router.post("/", async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
 	const newCategory = new Category(req.body);
 	const savedCategory = await newCategory.save();
 	res.json(savedCategory);
 });
 
-router.post("/:id", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
-});
-
 // delete by id	
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
 	try {
 		const deleteCategory = await Category.findByIdAndDelete({ _id: req.params.id });
 		res.json(deleteCategory);
@@ -44,13 +40,8 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
-router.delete("/", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
-});
-
 // update by id	
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
 	console.log(req.body)
 	try {
 		const updateCategory = await Category.updateOne(
@@ -64,7 +55,7 @@ router.put("/:id", async (req, res) => {
 	}
 });
 
-router.put("/", async (req, res) => {
+router.all("*", async (req, res) => {
 	res.status(405);
 	res.json({ message: "Method not allowed." });
 });

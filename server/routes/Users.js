@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/Users");
+const { passport, requireAuth, jwt } = require("../auth/auth");
 
 // get all recipes
 router.get("/", async (req, res) => {
@@ -42,18 +43,63 @@ router.get("/:uid/submitted-recipe/:rid", async (req, res) => {
 	}
 });
 
-// create new recipe
-router.post("/", async (req, res) => {
-	const newUser = new User(req.body);
-	const savedUser = await newUser.save();
-	res.json(savedRecipe);
+// create new user
+router.post("/signup", passport.authenticate('signup', { session: false }), async (req, res) => {
+	res.json({
+		message: req.authInfo.message,
+		user: req.user
+	});
+});
+
+// login user
+router.post("/login", async (req, res, next) => {
+	passport.authenticate(
+		'login',
+		async (err, user, info) => {
+			try {
+				if (err || !user) {
+					const error = new Error('An error occurred.');
+
+					return next(error);
+				}
+
+				req.login(
+					user,
+					{ session: false },
+					async (error) => {
+						if (error) return next(error);
+
+						const body = { _id: user._id, email: user.email };
+						const token = jwt.sign({ user: body }, process.env.TOKEN_SECRET);
+
+						res.cookie('token', token, {
+							httpOnly: true,
+							secure: false, // set to false if you are not using https
+							sameSite: 'strict',
+							maxAge: 900000 // 15 minutes
+						});
+
+						return res.json({
+							// token: token, // todo: delete
+							message: 'Authentication successful'
+						});
+					}
+				);
+			} catch (error) {
+				return next(error);
+			}
+		}
+	)(req, res, next);
 });
 
 // delete by id	
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
 	try {
 		const deleteUser = await User.findByIdAndDelete({ _id: req.params.id });
-		res.json(deleteUser);
+		res.json({
+			message: "User deleted successfully",
+			user: deleteUser
+		});
 	} catch (err) {
 		res.status(404);
 		res.json({ message: err });
@@ -61,14 +107,17 @@ router.delete("/:id", async (req, res) => {
 });
 
 // update by id	
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAuth, async (req, res) => {
 	console.log(req.body)
 	try {
 		const updateUser = await User.updateOne(
 			{ _id: req.params.id },
 			{ $set: req.body }
 		);
-		res.json(updateUser);
+		res.json({
+			message: "User updated successfully",
+			user: updateUser
+		});
 	} catch (err) {
 		res.status(404);
 		res.json({ message: err });
