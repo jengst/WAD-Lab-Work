@@ -10,14 +10,22 @@
           <li><router-link class="nav-link px-2 text-white" to="/about">About</router-link></li>
         </ul>
 
-        <div class="text-end">
+        <div class="text-end" v-if="isTokenPresent">
+          <button type="button" class="btn btn-outline-light me-2" @click="logout">Logout</button>
+        </div>
+        <div class="text-end" v-else>
           <router-link to="/login"><button type="button" class="btn btn-outline-light me-2">Login</button></router-link>
-          <router-link to="/sign-up"><button type="button" class="btn btn-warning">Sign-up</button></router-link>
-
+          <router-link to="/signup"><button type="button" class="btn btn-warning">Signup</button></router-link>
         </div>
       </div>
     </div>
   </header>
+
+  <div class="container pt-5 text-center" v-if="notification.text">
+    <div class="alert m-auto d-inline-block" role="alert" :class="alertClass">
+      {{ notification.text }}
+    </div>
+  </div>
 
   <router-view />
 
@@ -35,3 +43,55 @@
     </footer>
   </div>
 </template>
+
+<script>
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import userHandler from "@/composables/userHandler";
+
+export default {
+  setup() {
+    const { token, logoutUser } = userHandler();
+    const route = useRoute();
+    const router = useRouter();
+    const isTokenPresent = computed(() => !!token.value);
+    const notification = ref({
+      type: "",
+      text: ""
+    });
+
+    watch(() => route.query, newQuery => {
+      notification.value.type = newQuery.notificationType || "";
+      notification.value.text = newQuery.notificationText || "";
+    });
+
+    const logout = () => {
+      logoutUser();
+      router.push({
+        path: '/', query: {
+          notificationType: 'success',
+          notificationText: 'You have been logged out successfully!'
+        }
+      });
+    };
+
+    const alertClass = computed(() => {
+      switch (notification.value.type) {
+        case 'success':
+          return 'alert-success';
+        case 'error':
+          return 'alert-danger';
+        default:
+          return 'alert-primary';
+      }
+    });
+
+    return {
+      isTokenPresent,
+      logout,
+      notification,
+      alertClass
+    };
+  },
+};
+</script>

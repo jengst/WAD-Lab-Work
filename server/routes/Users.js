@@ -72,15 +72,8 @@ router.post("/login", async (req, res, next) => {
 						const body = { _id: user._id, email: user.email };
 						const token = jwt.sign({ user: body }, process.env.TOKEN_SECRET);
 
-						res.cookie('token', token, {
-							httpOnly: true,
-							secure: false, // set to false if you are not using https
-							sameSite: 'strict',
-							maxAge: 900000 // 15 minutes
-						});
-
 						return res.json({
-							// token: token, // todo: delete
+							token: token,
 							message: 'Authentication successful'
 						});
 					}
@@ -125,8 +118,13 @@ router.put("/:id", requireAuth, async (req, res) => {
 });
 
 router.all("*", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
+	if (req.method === 'OPTIONS') {
+		res.status(200);
+		res.json({ message: "OK" });
+	} else {
+		res.status(405);
+		res.json({ message: "Method not allowed." });
+	}
 });
 
 module.exports = router;

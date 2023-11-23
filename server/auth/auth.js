@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const User = require('../models/Users');
 
 // get config vars
@@ -82,19 +82,11 @@ passport.use(
 	)
 );
 
-const cookieExtractor = function (req) {
-	let token = null;
-	if (req && req.cookies) {
-		token = req.cookies['token'];
-	}
-	return token;
-};
-
 passport.use(
 	new JWTstrategy(
 		{
 			secretOrKey: process.env.TOKEN_SECRET,
-			jwtFromRequest: cookieExtractor
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
 		},
 		async (token, done) => {
 			try {

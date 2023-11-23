@@ -7,7 +7,7 @@
 
 <script>
 import { onMounted } from "vue";
-import recipecrud from "../modules/recipecrud";
+import recipecrud from "../composables/recipecrud";
 
 export default {
   setup() {

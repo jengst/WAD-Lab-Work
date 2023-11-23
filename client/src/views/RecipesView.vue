@@ -35,17 +35,17 @@
 
 <script>
 import { onMounted } from "vue";
-import recipecrud from "../modules/recipecrud";
+import recipecrud from "../composables/recipecrud";
 
 export default {
 	setup() {
-		const { state, fetchAllRecipes, newRecipe, deleteRecipe, editRecipe } = recipecrud()
+		const { state, getAllRecipes, newRecipe, deleteRecipe, editRecipe } = recipecrud()
 
 		onMounted(() => {
-			fetchAllRecipes()
+			getAllRecipes()
 		})
 
-		return { state, fetchAllRecipes, newRecipe, deleteRecipe, editRecipe }
+		return { state, getAllRecipes, newRecipe, deleteRecipe, editRecipe }
 	}
 }
 </script>

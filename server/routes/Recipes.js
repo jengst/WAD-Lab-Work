@@ -68,8 +68,13 @@ router.put("/:id", requireAuth, async (req, res) => {
 });
 
 router.all("*", async (req, res) => {
-	res.status(405);
-	res.json({ message: "Method not allowed." });
+	if (req.method === 'OPTIONS') {
+		res.status(200);
+		res.json({ message: "OK" });
+	} else {
+		res.status(405);
+		res.json({ message: "Method not allowed." });
+	}
 });
 
 module.exports = router;

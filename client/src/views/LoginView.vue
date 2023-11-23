@@ -1,32 +1,58 @@
 <template>
-	<main class="form-signin w-100 m-auto" style="max-width: 330px; padding: 8rem 1rem;">
-		<form>
-			<h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+	<main class="m-auto" style="max-width: 330px; padding: 6rem 1rem;">
+		<form @submit.prevent="submitForm">
+			<h1 class="h3 mb-4 fw-normal">Please sign in</h1>
 
-			<div class="form-floating">
-				<input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-				<label for="floatingInput">Email address</label>
+			<div class="mb-4">
+				<label for="floatingInput" class="form-label fw-light">Email address</label>
+				<input v-model="form.email" type="email" class="form-control" id="floatingInput"
+					placeholder="name@example.com" required>
 			</div>
-			<div class="form-floating">
-				<input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-				<label for="floatingPassword">Password</label>
+			<div class="mb-4">
+				<label for="floatingPassword" class="form-label fw-light">Password</label>
+				<input v-model="form.password" type="password" class="form-control" id="floatingPassword"
+					placeholder="*******" required>
 			</div>
 
-			<div class="form-check text-start my-3">
-				<input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-				<label class="form-check-label" for="flexCheckDefault">
-					Remember me
-				</label>
-			</div>
 			<button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
 		</form>
+
+		<ModalComponent :openModal="openModal" :message="message" />
 	</main>
 </template>
 
 <script>
-export default {
-	setup() {
+import { reactive, ref } from 'vue';
+import userHandler from "../composables/userHandler";
+import ModalComponent from '../components/ModalComponent.vue';
 
+export default {
+	components: {
+		ModalComponent
+	},
+	setup() {
+		const form = reactive({
+			email: '',
+			password: '',
+		});
+
+		const message = ref("");
+		const openModal = ref(false);
+
+		const submitForm = async () => {
+			// Assign the return value of loginUser to message
+			const response = await userHandler().loginUser(form);
+			message.value = response.message;
+
+			openModal.value = true;
+		};
+
+		return {
+			form,
+			submitForm,
+			message,
+			openModal
+		};
 	}
 }
 </script>
