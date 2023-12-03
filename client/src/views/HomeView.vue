@@ -1,5 +1,5 @@
 <template>
-  <div class="container col-xxl-8 px-4 py-5">
+  <div class="container col-xxl-8 px-4">
     <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
       <div class="col-10 col-sm-8 col-lg-6">
         <img
@@ -12,8 +12,10 @@
           Create, collect, and explore an array of delicious recipes while enhancing your cooking expertise. Join us to
           save, review, and elevate your culinary skills.</p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-          <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">See Recipes</button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4">Submit Recipe</button>
+          <router-link to="/recipes" type="button" class="btn btn-primary btn-lg px-4 me-md-2">Discover
+            Recipes</router-link>
+          <router-link to="/create-recipe" type="button" class="btn btn-outline-secondary btn-lg px-4">Submit
+            Recipe</router-link>
         </div>
       </div>
     </div>

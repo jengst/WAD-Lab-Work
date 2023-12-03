@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Category = require("../models/Categories");
+const Recipe = require("../models/Recipes");
 const { requireAuth } = require("../auth/auth");
 
 
@@ -19,6 +20,21 @@ router.get("/:id", async (req, res) => {
 	catch (err) {
 		res.status(404);
 		res.json({ message: err });
+	}
+});
+
+// get recipes of category
+router.get("/:id/recipe", async (req, res) => {
+	try {
+		const category = await Category.findById(req.params.id);
+		if (!category) {
+			return res.status(404).json({ message: "Category not found" });
+		}
+
+		const recipes = await Recipe.find({ _id: { $in: category.recipes } });
+		res.json(recipes);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
 	}
 });
 

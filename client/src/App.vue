@@ -1,25 +1,32 @@
 <template>
-  <header class="p-3 text-bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+      <router-link to="/" class="navbar-brand" href="#">CookBook Connect</router-link>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+        aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li><router-link class="nav-link px-2 text-white" to="/">Home</router-link></li>
-          <li><router-link class="nav-link px-2 text-white" to="/recipes">Recipes</router-link></li>
-          <li><router-link class="nav-link px-2 text-white" to="/categories">Categories</router-link></li>
-          <li><router-link class="nav-link px-2 text-white" to="/about">About</router-link></li>
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><router-link class="nav-link" :class="isActive('/')" to="/">Home</router-link></li>
+          <li class="nav-item"><router-link class="nav-link" :class="isActive('/recipes')"
+              to="/recipes">Recipes</router-link></li>
+          <li class="nav-item"><router-link class="nav-link" :class="isActive('/categories')"
+              to="/categories">Categories</router-link></li>
+          <li class="nav-item"><router-link class="nav-link" :class="isActive('/about')" to="/about">About</router-link>
+          </li>
         </ul>
-
-        <div class="text-end" v-if="isTokenPresent">
+        <div v-if="isTokenPresent">
           <button type="button" class="btn btn-outline-light me-2" @click="logout">Logout</button>
         </div>
-        <div class="text-end" v-else>
+        <div v-else>
           <router-link to="/login"><button type="button" class="btn btn-outline-light me-2">Login</button></router-link>
           <router-link to="/signup"><button type="button" class="btn btn-warning">Signup</button></router-link>
         </div>
       </div>
     </div>
-  </header>
+  </nav>
 
   <div class="container pt-5 text-center" v-if="notification.text">
     <div class="alert m-auto d-inline-block" role="alert" :class="alertClass">
@@ -86,11 +93,16 @@ export default {
       }
     });
 
+    const isActive = (path) => {
+      return route.path === path ? 'active' : '';
+    };
+
     return {
       isTokenPresent,
       logout,
       notification,
-      alertClass
+      alertClass,
+      isActive
     };
   },
 };

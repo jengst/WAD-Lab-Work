@@ -45,6 +45,7 @@ router.get("/:uid/submitted-recipe/:rid", async (req, res) => {
 
 // create new user
 router.post("/signup", passport.authenticate('signup', { session: false }), async (req, res) => {
+	console.log(req.user);
 	res.json({
 		message: req.authInfo.message,
 		user: req.user
@@ -74,7 +75,8 @@ router.post("/login", async (req, res, next) => {
 
 						return res.json({
 							token: token,
-							message: 'Authentication successful'
+							message: 'Authentication successful',
+							user: user
 						});
 					}
 				);

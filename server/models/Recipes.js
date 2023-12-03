@@ -4,9 +4,14 @@ const RecipesSchema = new mongoose.Schema({
 	description: String,
 	ingredients: [String],
 	instructions: [String],
-	category: mongoose.ObjectId, // Reference to category
-	sumbmittedBy: mongoose.ObjectId, // Reference to user who created the recipe
-	approvedByAdmin: Boolean
+	categories: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Category"
+		}
+	],
+	image: String,
+	approvedByAdmin: Boolean,
 });
 
 module.exports = mongoose.model("Recipes", RecipesSchema);

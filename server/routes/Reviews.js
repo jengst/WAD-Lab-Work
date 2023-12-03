@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Review = require("../models/Reviews");
+const User = require("../models/Users");
 const { requireAuth } = require("../auth/auth");
 
 
@@ -19,6 +20,21 @@ router.get("/:id", async (req, res) => {
 	catch (err) {
 		res.status(404);
 		res.json({ message: err });
+	}
+});
+
+// get users of review
+router.get("/:id/user", async (req, res) => {
+	try {
+		const review = await Review.findById(req.params.id);
+		if (!review) {
+			return res.status(404).json({ message: "Review not found" });
+		}
+
+		const users = await User.find({ _id: { $in: review.userId } });
+		res.json(users);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
 	}
 });
 

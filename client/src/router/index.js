@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import userHandler from "@/composables/userHandler";
-const { token } = userHandler();
+const { token, loggedInUser } = userHandler();
 
 const routes = [
   {
@@ -33,6 +33,27 @@ const routes = [
     name: 'singleRecipeEdit',
     component: () => import('../views/SingleRecipeView.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/categories',
+    name: 'categories',
+    component: () => import('../views/CategoriesView.vue')
+  },
+  {
+    path: '/category/:id',
+    name: 'singleCategory',
+    component: () => import('../views/SingleCategoryView.vue')
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/AboutView.vue')
+  },
+  {
+    path: '/create-recipe',
+    name: 'createRecipe',
+    component: () => import('@/views/AddRecipeView.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -49,6 +70,21 @@ router.beforeEach((to, from, next) => {
       query: {
         notificationType: 'error',
         notificationText: 'You must be logged in to view that page.'
+      }
+    });
+  } else {
+    next(); // Proceed to the requested route
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAdmin && !token.value && !loggedInUser.value.isAdmin) {
+    // If route requires authentication and user is not logged in
+    next({
+      path: '/',
+      query: {
+        notificationType: 'error',
+        notificationText: 'You must be an admin in to view that page.'
       }
     });
   } else {

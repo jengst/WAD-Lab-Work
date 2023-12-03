@@ -12,9 +12,12 @@ const UsersSchema = new mongoose.Schema({
 		required: true,
 		unique: true
 	},
-	firstName: String,
-	lastName: String,
-	recipesSaved: [mongoose.ObjectId],
+	username: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	reviewsSubmitted: [mongoose.ObjectId],
 	recipesSubmitted: [mongoose.ObjectId],
 });
 

@@ -25,6 +25,7 @@ api.interceptors.request.use(config => {
 
 // Reference to the token in local storage
 const token = ref(localStorage.getItem('token') ?? null);
+const loggedInUser = ref(JSON.parse(localStorage.getItem('loggedInUser')) ?? {});
 
 // Function to make requests to the API
 const makeRequest = async (method, url, data) => {
@@ -52,6 +53,8 @@ const handleUsers = () => {
 				const receivedToken = response.token;
 				localStorage.setItem('token', receivedToken);
 				token.value = receivedToken;
+				localStorage.setItem('loggedInUser', JSON.stringify(response.user));
+				loggedInUser.value = response.user;
 			} else {
 				console.error('Response is undefined or token is not present in the response');
 			}
@@ -67,9 +70,15 @@ const handleUsers = () => {
 	const logoutUser = () => {
 		localStorage.removeItem('token');
 		token.value = null;
+		localStorage.removeItem('loggedInUser');
+		loggedInUser.value = null;
 	};
 
-	return { signupUser, loginUser, logoutUser, token };
+	// const getOneUser = async (userId) => {
+	// 	user.value = await makeRequest('get', `/${userId}`);
+	// };
+
+	return { signupUser, loginUser, logoutUser, token, loggedInUser };
 };
 
 export default handleUsers;

@@ -29,8 +29,7 @@ passport.use(
 				const newUser = new User({
 					email,
 					password,
-					firstName: req.body.firstName,
-					lastName: req.body.lastName,
+					username: req.body.username,
 					recipesSaved: req.body.recipesSaved,
 					recipesSubmitted: req.body.recipesSubmitted,
 				});
@@ -99,7 +98,8 @@ passport.use(
 );
 
 const requireAuth = (req, res, next) => {
-	return passport.authenticate('jwt', { session: false })(req, res, next);
+	let test = passport.authenticate('jwt', { session: false })(req, res, next);
+	return test;
 };
 
 module.exports = {
