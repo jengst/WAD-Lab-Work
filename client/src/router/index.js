@@ -54,7 +54,24 @@ const routes = [
     name: 'createRecipe',
     component: () => import('@/views/AddRecipeView.vue'),
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/admin/create-category',
+    name: 'createCategory',
+    component: () => import('@/views/admin/AddCategoryView.vue'),
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/admin/delete-reviews',
+    name: 'deleteReviews',
+    component: () => import('@/views/admin/DeleteReviewsView.vue'),
+    meta: { requiresAdmin: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('@/views/NotFoundView.vue')
+  },
 ]
 
 const router = createRouter({

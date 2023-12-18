@@ -1,5 +1,7 @@
 import { ref } from "vue";
 import axios from 'axios';
+import userHandler from "@/composables/userHandler";
+const { token } = userHandler();
 
 // Create an axios instance with a base URL
 const api = axios.create({
@@ -14,9 +16,8 @@ api.interceptors.response.use(response => response, error => {
 
 // Interceptor to attach token to requests if it exists
 api.interceptors.request.use(config => {
-	const token = localStorage.getItem('token');
 	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
+		config.headers.Authorization = `Bearer ${token.value}`;
 	}
 	return config;
 }, error => {
@@ -53,7 +54,12 @@ const handleCategories = () => {
 		category.value = await makeRequest('get', `/${categoryId}`);
 	};
 
-	return { categories, getAllCategories, recipes, getAllRecipesOfCategory, category, getOneCategory }
+	const createCategory = async (input) => {
+		let response = await makeRequest('post', '/', { ...input });
+		return response;
+	};
+
+	return { categories, getAllCategories, recipes, getAllRecipesOfCategory, category, getOneCategory, createCategory }
 };
 
 export default handleCategories;

@@ -38,10 +38,16 @@ const makeRequest = async (method, url, data) => {
 const handleReviews = () => {
 	let review = ref({});
 	let user = ref({});
+	let reviews = ref({});
 
 	const getOneReview = async () => {
 		let result = await makeRequest('get', '/');
 		review.value = result;
+	};
+
+	const getAllReviews = async () => {
+		let result = await makeRequest('get', '/');
+		reviews.value = result;
 	};
 
 	const getUserOfReview = async (review) => {
@@ -70,7 +76,11 @@ const handleReviews = () => {
 		}
 	};
 
-	return { review, getOneReview, user, getUserOfReview, newReview }
+	const deleteReview = async (id) => {
+		await makeRequest('delete', `/${id}`);
+	};
+
+	return { review, getOneReview, user, getUserOfReview, newReview, getAllReviews, reviews, deleteReview }
 };
 
 export default handleReviews;

@@ -1,17 +1,17 @@
 <template>
 	<main class="container">
-		<h2 class="my-4">Create a new recipe</h2>
+		<h2 class="my-4">Submit a new recipe</h2>
 		<div class="row mb-24">
 			<form @submit.prevent="submitForm">
 				<div class="mb-4">
 					<label for="title" class="form-label fw-light">Title</label>
-					<input v-model="form.title" type="text" class="form-control" id="title" placeholder="Tasty recipe"
+					<input v-model="form.title" type="text" class="form-control" id="title" placeholder="New recipe"
 						required>
 				</div>
 				<div class="mb-4">
 					<label for="desc" class="form-label fw-light">Desciption</label>
 					<input v-model="form.description" type="text" class="form-control" id="desc"
-						placeholder="Tasty description" required>
+						placeholder="Recipe description" required>
 				</div>
 				<div class="mb-4">
 					<label for="img" class="form-label fw-light">Image URL</label>
@@ -45,7 +45,7 @@
 
 				<div class="mb-4">
 					<label class="form-label fw-light">Categories</label>
-					<div class="list-group list-group-checkable d-flex gap-2 flex-lg-row flex-column">
+					<div class="list-group list-group-checkable d-flex gap-2 flex-lg-row flex-wrap flex-column">
 
 						<span v-for="category in categories" :key="category._id">
 							<input class="list-group-item-check pe-none" type="checkbox"

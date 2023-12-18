@@ -1,17 +1,17 @@
 <template>
 	<main class="container">
-		<h2 class="my-4">Create a new recipe</h2>
+		<h2 class="my-4">Submit a new category</h2>
 		<div class="row mb-24">
 			<form @submit.prevent="submitForm">
 				<div class="mb-4">
-					<label for="title" class="form-label fw-light">Title</label>
-					<input v-model="form.title" type="text" class="form-control" id="title" placeholder="Tasty recipe"
+					<label for="title" class="form-label fw-light">Name</label>
+					<input v-model="form.name" type="text" class="form-control" id="name" placeholder="New category"
 						required>
 				</div>
 				<div class="mb-4">
 					<label for="desc" class="form-label fw-light">Desciption</label>
 					<input v-model="form.description" type="text" class="form-control" id="desc"
-						placeholder="Tasty description" required>
+						placeholder="Category description" required>
 				</div>
 				<div class="mb-4">
 					<label for="img" class="form-label fw-light">Image URL</label>
@@ -20,46 +20,22 @@
 				</div>
 
 				<div class="mb-4">
-					<label class="form-label fw-light">Ingredients</label>
-					<ul>
-						<li v-for="(item, index) in form.ingredients" :key="index">
-							<input v-model="form.ingredients[index]" type="text" class="form-control mb-2"
-								:id="'Ingredients' + index" placeholder="New ingredient" required>
-						</li>
-					</ul>
-					<button class="btn btn-outline-primary" @click.prevent="addItem(form.ingredients, 20);">Add
-						ingredient</button>
-				</div>
+					<label class="form-label fw-light">Recipes to add to the new category</label>
+					<div class="list-group list-group-checkable d-flex gap-2 flex-lg-row flex-wrap flex-column">
 
-				<div class="mb-4">
-					<label class="form-label fw-light">Instructions</label>
-					<ol>
-						<li v-for="(item, index) in form.instructions" :key="index">
-							<input v-model="form.instructions[index]" type="text" class="form-control mb-2"
-								:id="'Instructions' + index" placeholder="New instruction" required>
-						</li>
-					</ol>
-					<button class="btn btn-outline-primary" @click.prevent="addItem(form.instructions, 20);">Add
-						instruction</button>
-				</div>
-
-				<div class="mb-4">
-					<label class="form-label fw-light">Categories</label>
-					<div class="list-group list-group-checkable d-flex gap-2 flex-lg-row flex-column">
-
-						<span v-for="category in categories" :key="category._id">
+						<span v-for="recipe in recipes" :key="recipe._id" class="flex-grow-1">
 							<input class="list-group-item-check pe-none" type="checkbox"
-								:name="'listGroupCheckableRadios' + category._id"
-								:id="'listGroupCheckableRadios' + category._id" :value="category._id"
-								v-model="form.categories">
-							<label class="list-group-item rounded py-2" :for="'listGroupCheckableRadios' + category._id">
-								{{ category.name }}
+								:name="'listGroupCheckableRadios' + recipe._id"
+								:id="'listGroupCheckableRadios' + recipe._id" :value="recipe._id" v-model="form.recipes">
+							<label class="list-group-item rounded py-2" :for="'listGroupCheckableRadios' + recipe._id">
+								{{ recipe.title }}
+								<span class="d-block small opacity-50">{{ recipe.description }}</span>
 							</label>
 						</span>
 					</div>
 				</div>
 
-				<button class="btn btn-primary w-100 py-2" type="submit">Submit recipe</button>
+				<button class="btn btn-primary w-100 py-2" type="submit">Submit category</button>
 			</form>
 		</div>
 		<!-- Modal -->
@@ -79,37 +55,25 @@ export default {
 		ModalComponent
 	},
 	setup() {
-		const { categories, getAllCategories } = categoryHandler();
-		const { createRecipe } = recipeHandler();
+		const { createCategory } = categoryHandler();
+		const { recipes, getAllRecipes } = recipeHandler();
 
 		const form = reactive({
-			title: '',
+			name: '',
 			description: '',
-			ingredients: [''],
-			instructions: [''],
 			image: '',
-			categories: []
+			recipes: []
 		});
 
 		const message = ref("");
 		const openModal = ref(false);
 
 		onMounted(() => {
-			getAllCategories();
+			getAllRecipes();
 		});
 
-		const addItem = (items, limit) => {
-			if (items.length < limit) {
-				items.push('');
-			}
-		};
-
 		const submitForm = async () => {
-			if (form.categories.length == 0) {
-				return;
-			}
-
-			const response = await createRecipe(form);
+			const response = await createCategory(form);
 			message.value = response.message;
 
 			openModal.value = true;
@@ -117,11 +81,10 @@ export default {
 
 		return {
 			form,
-			addItem,
 			submitForm,
 			message,
 			openModal,
-			categories
+			recipes
 		};
 	}
 }

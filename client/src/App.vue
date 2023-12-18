@@ -36,19 +36,21 @@
 
   <router-view />
 
-  <div class="container">
-    <footer class="py-3 my-4">
-      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-        <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/">Home</router-link></li>
-        <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/recipes">Recipes</router-link>
-        </li>
-        <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary"
-            to="/categories">Categories</router-link></li>
-        <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/about">About</router-link></li>
-      </ul>
-      <p class="text-center text-body-secondary">© 2023 CookBook Connect</p>
-    </footer>
-  </div>
+  <footer class="container mt-4">
+    <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+      <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/">Home</router-link></li>
+      <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/create-recipe">Submit
+          recipe</router-link>
+      </li>
+      <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/admin/create-category">Admin:
+          Delete
+          reviews</router-link></li>
+      <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/admin/delete-reviews">Admin: Add
+          category</router-link></li>
+      <li class="nav-item"><router-link class="nav-link px-2 text-body-secondary" to="/about">About</router-link></li>
+    </ul>
+    <p class="text-center text-body-secondary">© 2023 CookBook Connect</p>
+  </footer>
 </template>
 
 <script>
